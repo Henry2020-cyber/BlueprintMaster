@@ -9,6 +9,8 @@
 
 # production
 /build
+/dist
+/dist-electron
 
 # debug
 npm-debug.log*
@@ -25,7 +27,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# electron
-/dist-electron
-/dist
