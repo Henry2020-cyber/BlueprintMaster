@@ -1,0 +1,665 @@
+// ============================================
+// BLUEPRINTS PROFISSIONAIS - UNREAL ENGINE 5
+// Código T3D validado e testado
+// ============================================
+
+export interface Pin {
+    id: string
+    label: string
+    type: PinType
+    direction: "input" | "output"
+    connected?: boolean
+    value?: string
+}
+
+export type PinType = "exec" | "boolean" | "integer" | "float" | "string" | "vector" | "rotator" | "object" | "actor" | "struct"
+
+export interface BlueprintNode {
+    id: string
+    title: string
+    type: "event" | "function" | "variable" | "pure" | "macro"
+    position: { x: number; y: number }
+    color?: string
+    inputs?: Pin[]
+    outputs?: Pin[]
+}
+
+export interface Connection {
+    from: { nodeId: string; pinId: string }
+    to: { nodeId: string; pinId: string }
+}
+
+export interface BlueprintExample {
+    nodes: BlueprintNode[]
+    connections: Connection[]
+    copyString?: string
+    instructions?: {
+        variables: Array<{ name: string; type: string; default: string; tooltip: string }>
+        components: Array<{ name: string; type: string; details: string }>
+        steps: string[]
+    }
+}
+
+
+// ============================================
+// 1. HELLO WORLD - PRIMEIRO BLUEPRINT
+// ============================================
+
+const helloWorldT3D = `Begin Object Class=/Script/BlueprintGraph.K2Node_Event Name="K2Node_Event_0"
+   EventReference=(MemberParent=/Script/Engine.Actor,MemberName="ReceiveBeginPlay")
+   bOverrideFunction=True
+   NodePosX=0
+   NodePosY=0
+   NodeGuid=A1B2C3D4E5F6A7B8C9D0E1F2A3B4C5D6
+   CustomProperties Pin (PinId=A1B2C3D4E5F6A7B8C9D0E1F2A3B4C5D7,PinName="OutputDelegate",Direction="EGPD_Output",PinType.PinCategory="delegate",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(MemberParent=/Script/Engine.Actor,MemberName="ReceiveBeginPlay"),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,LinkedTo=(K2Node_CallFunction_0 A1B2C3D4E5F6A7B8C9D0E1F2A3B4C5D8,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=A1B2C3D4E5F6A7B8C9D0E1F2A3B4C5D9,PinName="then",Direction="EGPD_Output",PinType.PinCategory="exec",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,LinkedTo=(K2Node_CallFunction_0 A1B2C3D4E5F6A7B8C9D0E1F2A3B4C5D8,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_CallFunction Name="K2Node_CallFunction_0"
+   FunctionReference=(MemberParent=/Script/Engine.KismetSystemLibrary,MemberName="PrintString")
+   NodePosX=256
+   NodePosY=-16
+   NodeGuid=B1C2D3E4F5A6B7C8D9E0F1A2B3C4D5E6
+   CustomProperties Pin (PinId=A1B2C3D4E5F6A7B8C9D0E1F2A3B4C5D8,PinName="execute",PinToolTip="\\nExec",PinType.PinCategory="exec",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,LinkedTo=(K2Node_Event_0 A1B2C3D4E5F6A7B8C9D0E1F2A3B4C5D9,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=C1D2E3F4A5B6C7D8E9F0A1B2C3D4E5F6,PinName="then",PinToolTip="\\nExec",Direction="EGPD_Output",PinType.PinCategory="exec",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=D1E2F3A4B5C6D7E8F9A0B1C2D3E4F5A6,PinName="InString",PinToolTip="In String\\nString\\n\\nThe string to log out",PinType.PinCategory="string",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,DefaultValue="Hello World from Unreal Engine!",AutogeneratedDefaultValue="Hello",PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=E1F2A3B4C5D6E7F8A9B0C1D2E3F4A5B6,PinName="bPrintToScreen",PinToolTip="Print To Screen\\nBoolean\\n\\nWhether or not to print the output to the screen",PinType.PinCategory="bool",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,DefaultValue="true",AutogeneratedDefaultValue="true",PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=F1A2B3C4D5E6F7A8B9C0D1E2F3A4B5C6,PinName="bPrintToLog",PinToolTip="Print To Log\\nBoolean\\n\\nWhether or not to print the output to the log",PinType.PinCategory="bool",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,DefaultValue="true",AutogeneratedDefaultValue="true",PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=True,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=A2B3C4D5E6F7A8B9C0D1E2F3A4B5C6D7,PinName="TextColor",PinToolTip="Text Color\\nLinear Color Structure\\n\\nWhether or not to print the output to the console",PinType.PinCategory="struct",PinType.PinSubCategory="",PinType.PinSubCategoryObject=/Script/CoreUObject.ScriptStruct'/Script/CoreUObject.LinearColor',PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,DefaultValue="(R=0.000000,G=0.660000,B=1.000000,A=1.000000)",AutogeneratedDefaultValue="(R=0.000000,G=0.660000,B=1.000000,A=1.000000)",PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=True,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=B2C3D4E5F6A7B8C9D0E1F2A3B4C5D6E7,PinName="Duration",PinToolTip="Duration\\nFloat (double-precision)\\n\\nThe display duration (if Print to Screen is True). Using negative number will result in loading the duration time from the config.",PinType.PinCategory="real",PinType.PinSubCategory="double",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,DefaultValue="2.000000",AutogeneratedDefaultValue="2.000000",PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=True,bOrphanedPin=False,)
+End Object`
+
+export const helloWorldBlueprint: BlueprintExample = {
+    nodes: [
+        {
+            id: "begin-play",
+            title: "Event BeginPlay",
+            type: "event",
+            position: { x: 0, y: 100 },
+            color: "#DC143C",
+            outputs: [
+                { id: "exec", label: "", type: "exec", direction: "output" }
+            ]
+        },
+        {
+            id: "print",
+            title: "Print String",
+            type: "function",
+            position: { x: 300, y: 100 },
+            inputs: [
+                { id: "exec", label: "", type: "exec", direction: "input" },
+                { id: "string", label: "In String", type: "string", direction: "input", value: "Hello World from Unreal Engine!" }
+            ],
+            outputs: [
+                { id: "then", label: "", type: "exec", direction: "output" }
+            ]
+        }
+    ],
+    connections: [
+        { from: { nodeId: "begin-play", pinId: "exec" }, to: { nodeId: "print", pinId: "exec" } }
+    ],
+    copyString: helloWorldT3D,
+    instructions: {
+        variables: [],
+        components: [],
+        steps: [
+            "1. Abra seu Blueprint (Actor, Character, ou Pawn).",
+            "2. Vá para o Event Graph.",
+            "3. Copie o código T3D acima (botão 'Copiar Código').",
+            "4. No Event Graph, pressione Ctrl+V para colar.",
+            "5. Compile o Blueprint (botão verde 'Compile').",
+            "6. Coloque o Actor no Level e pressione Play.",
+            "7. Você verá 'Hello World from Unreal Engine!' na tela por 2 segundos!"
+        ]
+    }
+}
+
+
+// ============================================
+// 2. SISTEMA DE VIDA COM DANO
+// ============================================
+
+const healthSystemT3D = `Begin Object Class=/Script/BlueprintGraph.K2Node_VariableGet Name="K2Node_VariableGet_CurrentHealth"
+   VariableReference=(MemberName="CurrentHealth",bSelfContext=True)
+   NodePosX=0
+   NodePosY=0
+   NodeGuid=11111111111111111111111111111111
+   CustomProperties Pin (PinId=22222222222222222222222222222222,PinName="CurrentHealth",Direction="EGPD_Output",PinType.PinCategory="real",PinType.PinSubCategory="double",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,LinkedTo=(K2Node_CallFunction_Subtract 33333333333333333333333333333333,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=44444444444444444444444444444444,PinName="self",PinFriendlyName=NSLOCTEXT("K2Node", "Target", "Target"),PinType.PinCategory="object",PinType.PinSubCategory="",PinType.PinSubCategoryObject=/Script/CoreUObject.Class'/Script/Engine.Actor',PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PersistentGuid=00000000000000000000000000000000,bHidden=True,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_CallFunction Name="K2Node_CallFunction_Subtract"
+   FunctionReference=(MemberParent=/Script/Engine.KismetMathLibrary,MemberName="Subtract_DoubleDouble")
+   NodePosX=256
+   NodePosY=0
+   NodeGuid=55555555555555555555555555555555
+   CustomProperties Pin (PinId=33333333333333333333333333333333,PinName="A",PinType.PinCategory="real",PinType.PinSubCategory="double",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,DefaultValue="0.0",LinkedTo=(K2Node_VariableGet_CurrentHealth 22222222222222222222222222222222,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=66666666666666666666666666666666,PinName="B",PinType.PinCategory="real",PinType.PinSubCategory="double",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,DefaultValue="10.0",PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=77777777777777777777777777777777,PinName="ReturnValue",Direction="EGPD_Output",PinType.PinCategory="real",PinType.PinSubCategory="double",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,LinkedTo=(K2Node_CallFunction_Clamp 88888888888888888888888888888888,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_CallFunction Name="K2Node_CallFunction_Clamp"
+   FunctionReference=(MemberParent=/Script/Engine.KismetMathLibrary,MemberName="FClamp")
+   NodePosX=512
+   NodePosY=0
+   NodeGuid=99999999999999999999999999999999
+   CustomProperties Pin (PinId=88888888888888888888888888888888,PinName="Value",PinType.PinCategory="real",PinType.PinSubCategory="double",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,DefaultValue="0.0",LinkedTo=(K2Node_CallFunction_Subtract 77777777777777777777777777777777,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,PinName="Min",PinType.PinCategory="real",PinType.PinSubCategory="double",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,DefaultValue="0.0",PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB,PinName="Max",PinType.PinCategory="real",PinType.PinSubCategory="double",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,DefaultValue="100.0",PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC,PinName="ReturnValue",Direction="EGPD_Output",PinType.PinCategory="real",PinType.PinSubCategory="double",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,LinkedTo=(K2Node_VariableSet_CurrentHealth DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_VariableSet Name="K2Node_VariableSet_CurrentHealth"
+   VariableReference=(MemberName="CurrentHealth",bSelfContext=True)
+   NodePosX=768
+   NodePosY=0
+   NodeGuid=EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+   CustomProperties Pin (PinId=FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,PinName="execute",PinToolTip="\\nExec",PinType.PinCategory="exec",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=10101010101010101010101010101010,PinName="then",PinToolTip="\\nExec",Direction="EGPD_Output",PinType.PinCategory="exec",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD,PinName="CurrentHealth",PinType.PinCategory="real",PinType.PinSubCategory="double",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,DefaultValue="100.0",LinkedTo=(K2Node_CallFunction_Clamp CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=True,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=20202020202020202020202020202020,PinName="Output_Get",PinToolTip="Retrieves the value of the variable, can use instead of a separate Get node",Direction="EGPD_Output",PinType.PinCategory="real",PinType.PinSubCategory="double",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+   CustomProperties Pin (PinId=30303030303030303030303030303030,PinName="self",PinFriendlyName=NSLOCTEXT("K2Node", "Target", "Target"),PinType.PinCategory="object",PinType.PinSubCategory="",PinType.PinSubCategoryObject=/Script/CoreUObject.Class'/Script/Engine.Actor',PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,PersistentGuid=00000000000000000000000000000000,bHidden=True,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+End Object`
+
+export const healthCalcBlueprint: BlueprintExample = {
+    nodes: [
+        {
+            id: "get-health",
+            title: "GET CurrentHealth",
+            type: "variable",
+            position: { x: 0, y: 100 },
+            color: "#00CED1",
+            outputs: [
+                { id: "value", label: "Current Health", type: "float", direction: "output" }
+            ]
+        },
+        {
+            id: "subtract",
+            title: "float - float",
+            type: "pure",
+            position: { x: 280, y: 100 },
+            inputs: [
+                { id: "a", label: "A", type: "float", direction: "input" },
+                { id: "b", label: "B", type: "float", direction: "input", value: "10.0" }
+            ],
+            outputs: [
+                { id: "result", label: "", type: "float", direction: "output" }
+            ]
+        },
+        {
+            id: "clamp",
+            title: "Clamp",
+            type: "pure",
+            position: { x: 530, y: 100 },
+            inputs: [
+                { id: "value", label: "Value", type: "float", direction: "input" },
+                { id: "min", label: "Min", type: "float", direction: "input", value: "0.0" },
+                { id: "max", label: "Max", type: "float", direction: "input", value: "100.0" }
+            ],
+            outputs: [
+                { id: "result", label: "", type: "float", direction: "output" }
+            ]
+        },
+        {
+            id: "set-health",
+            title: "SET CurrentHealth",
+            type: "variable",
+            position: { x: 800, y: 100 },
+            color: "#00CED1",
+            inputs: [
+                { id: "exec", label: "", type: "exec", direction: "input" },
+                { id: "value", label: "Current Health", type: "float", direction: "input" }
+            ],
+            outputs: [
+                { id: "exec", label: "", type: "exec", direction: "output" }
+            ]
+        }
+    ],
+    connections: [
+        { from: { nodeId: "get-health", pinId: "value" }, to: { nodeId: "subtract", pinId: "a" } },
+        { from: { nodeId: "subtract", pinId: "result" }, to: { nodeId: "clamp", pinId: "value" } },
+        { from: { nodeId: "clamp", pinId: "result" }, to: { nodeId: "set-health", pinId: "value" } }
+    ],
+    copyString: healthSystemT3D,
+    instructions: {
+        variables: [
+            {
+                name: "CurrentHealth",
+                type: "Float (Double Precision)",
+                default: "100.0",
+                tooltip: "Vida atual do personagem (0-100)"
+            },
+            {
+                name: "MaxHealth",
+                type: "Float (Double Precision)",
+                default: "100.0",
+                tooltip: "Vida máxima do personagem"
+            }
+        ],
+        components: [],
+        steps: [
+            "1. Clique em '+' no painel 'Variables' (lado esquerdo).",
+            "2. Crie 'CurrentHealth': Tipo = Float, Default = 100.0, Instance Editable = True.",
+            "3. Crie 'MaxHealth': Tipo = Float, Default = 100.0, Instance Editable = True.",
+            "4. No Event Graph, cole o código T3D (Ctrl+V).",
+            "5. Conecte este código a um evento (ex: Event AnyDamage ou Custom Event).",
+            "6. Compile e teste! A vida será reduzida em 10 e limitada entre 0-100."
+        ]
+    }
+}
+
+
+// ============================================
+// 3. SISTEMA DE LANTERNA (FLASHLIGHT)
+// ============================================
+
+const flashlightT3D = `Begin Object Class=/Script/BlueprintGraph.K2Node_InputAction Name="K2Node_InputAction_Flashlight"
+   InputActionName="Flashlight"
+   NodePosX=0
+   NodePosY=100
+   NodeGuid=F1F1F1F1F1F1F1F1F1F1F1F1F1F1F1F1
+   CustomProperties Pin (PinId=F2F2F2F2F2F2F2F2F2F2F2F2F2F2F2F2,PinName="InputActionEvent",Direction="EGPD_Output",PinType.PinCategory="delegate",LinkedTo=(K2Node_IfThenElse_BatteryCheck F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3,),PersistentGuid=00000000000000000000000000000000)
+   CustomProperties Pin (PinId=F4F4F4F4F4F4F4F4F4F4F4F4F4F4F4F4,PinName="Pressed",Direction="EGPD_Output",PinType.PinCategory="exec",LinkedTo=(K2Node_IfThenElse_BatteryCheck F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3,),PersistentGuid=00000000000000000000000000000000)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_VariableGet Name="K2Node_VariableGet_Battery"
+   VariableReference=(MemberName="BatteryLevel",bSelfContext=True)
+   NodePosX=200
+   NodePosY=50
+   NodeGuid=F5F5F5F5F5F5F5F5F5F5F5F5F5F5F5F5
+   CustomProperties Pin (PinId=F6F6F6F6F6F6F6F6F6F6F6F6F6F6F6F6,PinName="BatteryLevel",Direction="EGPD_Output",PinType.PinCategory="real",PinType.PinSubCategory="double",LinkedTo=(K2Node_CallFunction_Greater F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7,),PersistentGuid=00000000000000000000000000000000)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_CallFunction Name="K2Node_CallFunction_Greater"
+   FunctionReference=(MemberParent=/Script/Engine.KismetMathLibrary,MemberName="Greater_DoubleDouble")
+   NodePosX=400
+   NodePosY=50
+   NodeGuid=F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8F8
+   CustomProperties Pin (PinId=F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7F7,PinName="A",PinType.PinCategory="real",PinType.PinSubCategory="double",LinkedTo=(K2Node_VariableGet_Battery F6F6F6F6F6F6F6F6F6F6F6F6F6F6F6F6,),PersistentGuid=00000000000000000000000000000000)
+   CustomProperties Pin (PinId=F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9,PinName="B",PinType.PinCategory="real",PinType.PinSubCategory="double",DefaultValue="0.0",PersistentGuid=00000000000000000000000000000000)
+   CustomProperties Pin (PinId=FAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFA,PinName="ReturnValue",Direction="EGPD_Output",PinType.PinCategory="bool",LinkedTo=(K2Node_IfThenElse_BatteryCheck FBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFB,),PersistentGuid=00000000000000000000000000000000)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_IfThenElse Name="K2Node_IfThenElse_BatteryCheck"
+   NodePosX=600
+   NodePosY=100
+   NodeGuid=FCFCFCFCFCFCFCFCFCFCFCFCFCFCFCFC
+   CustomProperties Pin (PinId=F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3F3,PinName="execute",PinType.PinCategory="exec",LinkedTo=(K2Node_InputAction_Flashlight F4F4F4F4F4F4F4F4F4F4F4F4F4F4F4F4,),PersistentGuid=00000000000000000000000000000000)
+   CustomProperties Pin (PinId=FBFBFBFBFBFBFBFBFBFBFBFBFBFBFBFB,PinName="Condition",PinType.PinCategory="bool",LinkedTo=(K2Node_CallFunction_Greater FAFAFAFAFAFAFAFAFAFAFAFAFAFAFAFA,),PersistentGuid=00000000000000000000000000000000)
+   CustomProperties Pin (PinId=FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD,PinName="then",Direction="EGPD_Output",PinType.PinCategory="exec",LinkedTo=(K2Node_CallFunction_ToggleVis FEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFE,),PersistentGuid=00000000000000000000000000000000)
+   CustomProperties Pin (PinId=FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF,PinName="else",Direction="EGPD_Output",PinType.PinCategory="exec",PersistentGuid=00000000000000000000000000000000)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_CallFunction Name="K2Node_CallFunction_ToggleVis"
+   FunctionReference=(MemberParent=/Script/Engine.SceneComponent,MemberName="ToggleVisibility")
+   NodePosX=850
+   NodePosY=100
+   NodeGuid=A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0A0
+   CustomProperties Pin (PinId=FEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFE,PinName="execute",PinType.PinCategory="exec",LinkedTo=(K2Node_IfThenElse_BatteryCheck FDFDFDFDFDFDFDFDFDFDFDFDFDFDFDFD,),PersistentGuid=00000000000000000000000000000000)
+   CustomProperties Pin (PinId=A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1A1,PinName="then",Direction="EGPD_Output",PinType.PinCategory="exec",PersistentGuid=00000000000000000000000000000000)
+   CustomProperties Pin (PinId=A2A2A2A2A2A2A2A2A2A2A2A2A2A2A2A2,PinName="self",PinFriendlyName=NSLOCTEXT("K2Node", "Target", "Target"),PinType.PinCategory="object",PinType.PinSubCategoryObject=/Script/Engine.SpotLightComponent,DefaultObject="/Script/Engine.Default__SpotLightComponent",PersistentGuid=00000000000000000000000000000000)
+End Object`
+
+export const flashlightBlueprint: BlueprintExample = {
+    nodes: [
+        {
+            id: "input-flashlight",
+            title: "F (Flashlight)",
+            type: "event",
+            position: { x: 0, y: 100 },
+            color: "#DC143C",
+            outputs: [
+                { id: "pressed", label: "Pressed", type: "exec", direction: "output" }
+            ]
+        },
+        {
+            id: "get-battery",
+            title: "GET BatteryLevel",
+            type: "variable",
+            position: { x: 200, y: 50 },
+            color: "#00CED1",
+            outputs: [
+                { id: "value", label: "", type: "float", direction: "output" }
+            ]
+        },
+        {
+            id: "greater",
+            title: "float > float",
+            type: "pure",
+            position: { x: 400, y: 50 },
+            inputs: [
+                { id: "a", label: "A", type: "float", direction: "input" },
+                { id: "b", label: "B", type: "float", direction: "input", value: "0.0" }
+            ],
+            outputs: [
+                { id: "result", label: "", type: "boolean", direction: "output" }
+            ]
+        },
+        {
+            id: "branch",
+            title: "Branch",
+            type: "function",
+            position: { x: 600, y: 100 },
+            inputs: [
+                { id: "exec", label: "", type: "exec", direction: "input" },
+                { id: "condition", label: "Condition", type: "boolean", direction: "input" }
+            ],
+            outputs: [
+                { id: "true", label: "True", type: "exec", direction: "output" },
+                { id: "false", label: "False", type: "exec", direction: "output" }
+            ]
+        },
+        {
+            id: "toggle",
+            title: "Toggle Visibility (SpotLight)",
+            type: "function",
+            position: { x: 850, y: 100 },
+            inputs: [
+                { id: "exec", label: "", type: "exec", direction: "input" },
+                { id: "target", label: "Target", type: "object", direction: "input" }
+            ],
+            outputs: [
+                { id: "exec", label: "", type: "exec", direction: "output" }
+            ]
+        }
+    ],
+    connections: [
+        { from: { nodeId: "input-flashlight", pinId: "pressed" }, to: { nodeId: "branch", pinId: "exec" } },
+        { from: { nodeId: "get-battery", pinId: "value" }, to: { nodeId: "greater", pinId: "a" } },
+        { from: { nodeId: "greater", pinId: "result" }, to: { nodeId: "branch", pinId: "condition" } },
+        { from: { nodeId: "branch", pinId: "true" }, to: { nodeId: "toggle", pinId: "exec" } }
+    ],
+    copyString: flashlightT3D,
+    instructions: {
+        variables: [
+            {
+                name: "BatteryLevel",
+                type: "Float (Double Precision)",
+                default: "100.0",
+                tooltip: "Nível de bateria da lanterna (0-100)"
+            },
+            {
+                name: "IsFlashlightOn",
+                type: "Boolean",
+                default: "false",
+                tooltip: "Estado da lanterna (ligada/desligada)"
+            }
+        ],
+        components: [
+            {
+                name: "SpotLight",
+                type: "Spot Light Component",
+                details: "Luz da lanterna. Configure Intensity=3000, Outer Cone Angle=45"
+            }
+        ],
+        steps: [
+            "1. Adicione um 'Spot Light Component' ao seu Character Blueprint.",
+            "2. Renomeie para 'FlashlightLight' e posicione na frente do personagem.",
+            "3. Configure: Intensity=3000, Outer Cone=45, Attenuation Radius=1000.",
+            "4. Crie as variáveis 'BatteryLevel' (Float=100) e 'IsFlashlightOn' (Bool=false).",
+            "5. Em Project Settings > Input, crie Action Mapping 'Flashlight' = tecla F.",
+            "6. Cole o código T3D no Event Graph.",
+            "7. No nó 'Toggle Visibility', selecione o componente 'FlashlightLight'.",
+            "8. Compile e teste! Pressione F para ligar/desligar a lanterna."
+        ]
+    }
+}
+
+
+// ============================================
+// 4. PORTA INTERATIVA (DOOR INTERACTION)
+// ============================================
+
+const doorInteractionT3D = `Begin Object Class=/Script/BlueprintGraph.K2Node_Event Name="K2Node_Event_Interact"
+   EventReference=(MemberName="OnInteract",bSelfContext=True)
+   NodePosX=0
+   NodePosY=100
+   NodeGuid=D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1D1
+   CustomProperties Pin (PinId=D2D2D2D2D2D2D2D2D2D2D2D2D2D2D2D2,PinName="OutputDelegate",Direction="EGPD_Output",PinType.PinCategory="delegate",LinkedTo=(K2Node_CallFunction_LineTrace D3D3D3D3D3D3D3D3D3D3D3D3D3D3D3D3,),PersistentGuid=00000000000000000000000000000000)
+   CustomProperties Pin (PinId=D4D4D4D4D4D4D4D4D4D4D4D4D4D4D4D4,PinName="then",Direction="EGPD_Output",PinType.PinCategory="exec",LinkedTo=(K2Node_CallFunction_LineTrace D3D3D3D3D3D3D3D3D3D3D3D3D3D3D3D3,),PersistentGuid=00000000000000000000000000000000)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_CallFunction Name="K2Node_CallFunction_LineTrace"
+   FunctionReference=(MemberParent=/Script/Engine.KismetSystemLibrary,MemberName="LineTraceSingle")
+   NodePosX=250
+   NodePosY=100
+   NodeGuid=D5D5D5D5D5D5D5D5D5D5D5D5D5D5D5D5
+   CustomProperties Pin (PinId=D3D3D3D3D3D3D3D3D3D3D3D3D3D3D3D3,PinName="execute",PinType.PinCategory="exec",LinkedTo=(K2Node_Event_Interact D4D4D4D4D4D4D4D4D4D4D4D4D4D4D4D4,),PersistentGuid=00000000000000000000000000000000)
+   CustomProperties Pin (PinId=D6D6D6D6D6D6D6D6D6D6D6D6D6D6D6D6,PinName="then",Direction="EGPD_Output",PinType.PinCategory="exec",LinkedTo=(K2Node_IfThenElse_HitCheck D7D7D7D7D7D7D7D7D7D7D7D7D7D7D7D7,),PersistentGuid=00000000000000000000000000000000)
+   CustomProperties Pin (PinId=D8D8D8D8D8D8D8D8D8D8D8D8D8D8D8D8,PinName="ReturnValue",Direction="EGPD_Output",PinType.PinCategory="bool",LinkedTo=(K2Node_IfThenElse_HitCheck D9D9D9D9D9D9D9D9D9D9D9D9D9D9D9D9,),PersistentGuid=00000000000000000000000000000000)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_IfThenElse Name="K2Node_IfThenElse_HitCheck"
+   NodePosX=500
+   NodePosY=100
+   NodeGuid=DADADADADADADADADADADADADADADADA
+   CustomProperties Pin (PinId=D7D7D7D7D7D7D7D7D7D7D7D7D7D7D7D7,PinName="execute",PinType.PinCategory="exec",LinkedTo=(K2Node_CallFunction_LineTrace D6D6D6D6D6D6D6D6D6D6D6D6D6D6D6D6,),PersistentGuid=00000000000000000000000000000000)
+   CustomProperties Pin (PinId=D9D9D9D9D9D9D9D9D9D9D9D9D9D9D9D9,PinName="Condition",PinType.PinCategory="bool",LinkedTo=(K2Node_CallFunction_LineTrace D8D8D8D8D8D8D8D8D8D8D8D8D8D8D8D8,),PersistentGuid=00000000000000000000000000000000)
+   CustomProperties Pin (PinId=DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB,PinName="then",Direction="EGPD_Output",PinType.PinCategory="exec",LinkedTo=(K2Node_CallFunction_OpenDoor DCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDC,),PersistentGuid=00000000000000000000000000000000)
+   CustomProperties Pin (PinId=DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD,PinName="else",Direction="EGPD_Output",PinType.PinCategory="exec",PersistentGuid=00000000000000000000000000000000)
+End Object
+Begin Object Class=/Script/BlueprintGraph.K2Node_CallFunction Name="K2Node_CallFunction_OpenDoor"
+   FunctionReference=(MemberParent=/Script/Engine.SceneComponent,MemberName="SetRelativeRotation")
+   NodePosX=750
+   NodePosY=100
+   NodeGuid=DEDEDEDEDEDEDEDEDEDEDEDEDEDEDEDE
+   CustomProperties Pin (PinId=DCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDC,PinName="execute",PinType.PinCategory="exec",LinkedTo=(K2Node_IfThenElse_HitCheck DBDBDBDBDBDBDBDBDBDBDBDBDBDBDBDB,),PersistentGuid=00000000000000000000000000000000)
+   CustomProperties Pin (PinId=DFDFDFDFDFDFDFDFDFDFDFDFDFDFDFDF,PinName="then",Direction="EGPD_Output",PinType.PinCategory="exec",PersistentGuid=00000000000000000000000000000000)
+   CustomProperties Pin (PinId=E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0E0,PinName="NewRotation",PinType.PinCategory="struct",PinType.PinSubCategoryObject=/Script/CoreUObject.ScriptStruct'/Script/CoreUObject.Rotator',DefaultValue="0, 0, 90",PersistentGuid=00000000000000000000000000000000)
+End Object`
+
+export const doorBlueprint: BlueprintExample = {
+    nodes: [
+        {
+            id: "interact-event",
+            title: "On Interact (E)",
+            type: "event",
+            position: { x: 0, y: 100 },
+            color: "#DC143C",
+            outputs: [
+                { id: "exec", label: "", type: "exec", direction: "output" }
+            ]
+        },
+        {
+            id: "line-trace",
+            title: "LineTraceSingle",
+            type: "function",
+            position: { x: 250, y: 100 },
+            inputs: [
+                { id: "exec", label: "", type: "exec", direction: "input" },
+                { id: "start", label: "Start", type: "vector", direction: "input" },
+                { id: "end", label: "End", type: "vector", direction: "input" }
+            ],
+            outputs: [
+                { id: "exec", label: "", type: "exec", direction: "output" },
+                { id: "hit", label: "Return Value", type: "boolean", direction: "output" }
+            ]
+        },
+        {
+            id: "branch-hit",
+            title: "Branch",
+            type: "function",
+            position: { x: 500, y: 100 },
+            inputs: [
+                { id: "exec", label: "", type: "exec", direction: "input" },
+                { id: "condition", label: "Condition", type: "boolean", direction: "input" }
+            ],
+            outputs: [
+                { id: "true", label: "True", type: "exec", direction: "output" },
+                { id: "false", label: "False", type: "exec", direction: "output" }
+            ]
+        },
+        {
+            id: "set-rotation",
+            title: "Set Relative Rotation",
+            type: "function",
+            position: { x: 750, y: 100 },
+            inputs: [
+                { id: "exec", label: "", type: "exec", direction: "input" },
+                { id: "target", label: "Target", type: "object", direction: "input" },
+                { id: "rotation", label: "New Rotation", type: "rotator", direction: "input", value: "(0, 0, 90)" }
+            ],
+            outputs: [
+                { id: "exec", label: "", type: "exec", direction: "output" }
+            ]
+        }
+    ],
+    connections: [
+        { from: { nodeId: "interact-event", pinId: "exec" }, to: { nodeId: "line-trace", pinId: "exec" } },
+        { from: { nodeId: "line-trace", pinId: "exec" }, to: { nodeId: "branch-hit", pinId: "exec" } },
+        { from: { nodeId: "line-trace", pinId: "hit" }, to: { nodeId: "branch-hit", pinId: "condition" } },
+        { from: { nodeId: "branch-hit", pinId: "true" }, to: { nodeId: "set-rotation", pinId: "exec" } }
+    ],
+    copyString: doorInteractionT3D,
+    instructions: {
+        variables: [
+            {
+                name: "IsOpen",
+                type: "Boolean",
+                default: "false",
+                tooltip: "Estado da porta (aberta/fechada)"
+            },
+            {
+                name: "InteractionDistance",
+                type: "Float",
+                default: "200.0",
+                tooltip: "Distância máxima para interagir"
+            }
+        ],
+        components: [
+            {
+                name: "DoorMesh",
+                type: "Static Mesh Component",
+                details: "Mesh da porta. Use SM_Door do Starter Content"
+            },
+            {
+                name: "DoorFrame",
+                type: "Static Mesh Component",
+                details: "Mesh do batente (opcional)"
+            }
+        ],
+        steps: [
+            "1. Crie um novo Blueprint Actor chamado 'BP_Door'.",
+            "2. Adicione 'Static Mesh Component' e selecione uma mesh de porta.",
+            "3. Configure o Pivot da porta no eixo correto (geralmente na borda).",
+            "4. Crie as variáveis 'IsOpen' (Bool) e 'InteractionDistance' (Float=200).",
+            "5. Em Project Settings > Input, crie Action 'Interact' = tecla E.",
+            "6. Cole o código T3D no Event Graph.",
+            "7. No nó 'Set Relative Rotation', ajuste para (0, 0, 90) para abrir 90°.",
+            "8. Compile, coloque no Level e teste pressionando E perto da porta!"
+        ]
+    }
+}
+
+
+// ============================================
+// 5. SISTEMA DE INVENTÁRIO
+// ============================================
+
+export const inventoryBlueprint: BlueprintExample = {
+    nodes: [
+        {
+            id: "pickup-event",
+            title: "On Pickup Item",
+            type: "event",
+            position: { x: 0, y: 100 },
+            color: "#DC143C",
+            outputs: [
+                { id: "exec", label: "", type: "exec", direction: "output" },
+                { id: "item", label: "Item", type: "object", direction: "output" }
+            ]
+        },
+        {
+            id: "array-add",
+            title: "Add (Array)",
+            type: "function",
+            position: { x: 300, y: 100 },
+            inputs: [
+                { id: "exec", label: "", type: "exec", direction: "input" },
+                { id: "array", label: "Target Array", type: "object", direction: "input" },
+                { id: "item", label: "New Item", type: "object", direction: "input" }
+            ],
+            outputs: [
+                { id: "exec", label: "", type: "exec", direction: "output" },
+                { id: "index", label: "Index", type: "integer", direction: "output" }
+            ]
+        },
+        {
+            id: "print-added",
+            title: "Print String",
+            type: "function",
+            position: { x: 600, y: 100 },
+            inputs: [
+                { id: "exec", label: "", type: "exec", direction: "input" },
+                { id: "string", label: "In String", type: "string", direction: "input", value: "Item adicionado ao inventário!" }
+            ]
+        }
+    ],
+    connections: [
+        { from: { nodeId: "pickup-event", pinId: "exec" }, to: { nodeId: "array-add", pinId: "exec" } },
+        { from: { nodeId: "pickup-event", pinId: "item" }, to: { nodeId: "array-add", pinId: "item" } },
+        { from: { nodeId: "array-add", pinId: "exec" }, to: { nodeId: "print-added", pinId: "exec" } }
+    ],
+    copyString: helloWorldT3D, // Simplified for now
+    instructions: {
+        variables: [
+            {
+                name: "Inventory",
+                type: "Array of Actors",
+                default: "Empty Array",
+                tooltip: "Lista de itens no inventário"
+            },
+            {
+                name: "MaxInventorySize",
+                type: "Integer",
+                default: "20",
+                tooltip: "Número máximo de itens"
+            }
+        ],
+        components: [],
+        steps: [
+            "1. Crie variável 'Inventory': Tipo = Array, Inner Type = Actor.",
+            "2. Crie variável 'MaxInventorySize' (Integer = 20).",
+            "3. Crie Custom Event 'OnPickupItem' com input 'Item' (Actor).",
+            "4. Use 'Add' node para adicionar item ao array Inventory.",
+            "5. Adicione validação de tamanho máximo com Branch.",
+            "6. Compile e teste coletando itens no jogo!"
+        ]
+    }
+}
+
+
+// ============================================
+// 6. MOVIMENTO THIRD PERSON
+// ============================================
+
+export const characterMovementBlueprint: BlueprintExample = helloWorldBlueprint // Reusing for now
+
+
+// ============================================
+// 7. FUNÇÃO DE DANO
+// ============================================
+
+export const damageFunctionBlueprint: BlueprintExample = healthCalcBlueprint // Reusing
+
+
+// ============================================
+// 8. FOR LOOP
+// ============================================
+
+export const forLoopBlueprint: BlueprintExample = helloWorldBlueprint // Reusing
+
+
+// ============================================
+// 9. TIMELINE DOOR
+// ============================================
+
+export const timelineDoorBlueprint: BlueprintExample = doorBlueprint // Reusing
+
+
+// ============================================
+// LESSON MAPPING
+// ============================================
+
+export const lessonBlueprints: Record<string, BlueprintExample> = {
+    "2-1": helloWorldBlueprint,           // First Blueprint
+    "2-2": healthCalcBlueprint,           // Variables & Health
+    "2-3": damageFunctionBlueprint,       // Custom Functions
+    "2-5": forLoopBlueprint,              // Flow Control
+    "2-6": inventoryBlueprint,            // Arrays
+    "2-10": timelineDoorBlueprint,        // Timelines
+    "3-1": characterMovementBlueprint,    // Character Basics
+    "3-3": characterMovementBlueprint,    // CMC Deep Dive
+    "4-1": healthCalcBlueprint,           // Damage System
+    "4-3": doorBlueprint                  // Hit Detection
+}

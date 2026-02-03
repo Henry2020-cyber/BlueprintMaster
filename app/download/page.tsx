@@ -1,0 +1,114 @@
+import { Header } from "@/components/landing/header"
+import { Footer } from "@/components/landing/footer"
+import { Button } from "@/components/ui/button"
+import { Apple, Download, Monitor, Terminal, ArrowRight } from "lucide-react"
+import Link from "next/link"
+
+export default function DownloadPage() {
+    return (
+        <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
+            <Header />
+
+            {/* Main Content with Mesh/Grid Background */}
+            <main className="flex-1 w-full relative">
+                <div className="absolute inset-0 bg-grid-pattern opacity-40 pointer-events-none" />
+
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-40 pb-24">
+                    {/* Header Section */}
+                    <div className="flex flex-col lg:flex-row justify-between items-start gap-8 mb-24 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                        <h1 className="text-5xl md:text-6xl font-bold tracking-tight max-w-3xl leading-tight">
+                            Baixe o BlueprintMaster <br className="hidden lg:block" /> para Windows
+                        </h1>
+                        <Button variant="outline" className="rounded-full px-6 py-6 text-base font-medium hover:bg-secondary/80 bg-background/50 backdrop-blur-sm border-border">
+                            Ver versões anteriores
+                        </Button>
+                    </div>
+
+                    {/* Download Grid Section */}
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200 fill-mode-backwards">
+                        {/* Label Column */}
+                        <div className="lg:col-span-1">
+                            <p className="text-lg font-medium text-muted-foreground">Selecione o download</p>
+                        </div>
+
+                        {/* MacOS Column */}
+                        <div className="lg:col-span-1 flex flex-col gap-8 border-l border-border/40 pl-8 lg:pl-10">
+                            <div className="flex items-center gap-3 text-xl font-bold text-foreground">
+                                <Apple className="w-6 h-6" />
+                                <span>macOS</span>
+                            </div>
+
+                            <div className="flex flex-col gap-4">
+                                <Link href="#" className="flex items-center gap-2.5 text-muted-foreground hover:text-primary transition-all hover:translate-x-1 group">
+                                    <Download className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
+                                    <span className="font-medium group-hover:underline decoration-primary/50 underline-offset-4">Download para Apple Silicon</span>
+                                </Link>
+                                <Link href="#" className="flex items-center gap-2.5 text-muted-foreground hover:text-primary transition-all hover:translate-x-1 group">
+                                    <Download className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
+                                    <span className="font-medium group-hover:underline decoration-primary/50 underline-offset-4">Download para Intel</span>
+                                </Link>
+                            </div>
+
+                            <div className="mt-4 space-y-2">
+                                <p className="font-semibold text-xs text-foreground uppercase tracking-wider">Requisitos Mínimos</p>
+                                <p className="text-sm text-muted-foreground leading-relaxed opacity-80">
+                                    Versões do macOS com suporte a atualizações de segurança da Apple. Isso geralmente inclui a versão atual e as duas anteriores. Versão mínima 12 (Monterey). x86 não é suportado.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Windows Column */}
+                        <div className="lg:col-span-1 flex flex-col gap-8 border-l border-border/40 pl-8 lg:pl-10">
+                            <div className="flex items-center gap-3 text-xl font-bold text-foreground">
+                                <Monitor className="w-6 h-6" />
+                                <span>Windows</span>
+                            </div>
+
+                            <div className="flex flex-col gap-4">
+                                <Link href="#" className="flex items-center gap-2.5 text-muted-foreground hover:text-primary transition-all hover:translate-x-1 group">
+                                    <Download className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
+                                    <span className="font-medium group-hover:underline decoration-primary/50 underline-offset-4">Download para x64</span>
+                                </Link>
+                                <Link href="#" className="flex items-center gap-2.5 text-muted-foreground hover:text-primary transition-all hover:translate-x-1 group">
+                                    <Download className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
+                                    <span className="font-medium group-hover:underline decoration-primary/50 underline-offset-4">Download para ARM64</span>
+                                </Link>
+                            </div>
+
+                            <div className="mt-4 space-y-2">
+                                <p className="font-semibold text-xs text-foreground uppercase tracking-wider">Requisitos Mínimos</p>
+                                <p className="text-sm text-muted-foreground leading-relaxed opacity-80">
+                                    Windows 10 (64 bit) ou superior.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Linux Column */}
+                        <div className="lg:col-span-1 flex flex-col gap-8 border-l border-border/40 pl-8 lg:pl-10">
+                            <div className="flex items-center gap-3 text-xl font-bold text-foreground">
+                                <Terminal className="w-6 h-6" />
+                                <span>Linux</span>
+                            </div>
+
+                            <div className="flex flex-col gap-4">
+                                <Link href="#" className="flex items-center gap-2.5 text-muted-foreground hover:text-primary transition-all hover:translate-x-1 group">
+                                    <Download className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
+                                    <span className="font-medium group-hover:underline decoration-primary/50 underline-offset-4">Download</span>
+                                </Link>
+                            </div>
+
+                            <div className="mt-4 space-y-2">
+                                <p className="font-semibold text-xs text-foreground uppercase tracking-wider">Requisitos Mínimos</p>
+                                <p className="text-sm text-muted-foreground leading-relaxed opacity-80">
+                                    glibc {'>='} 2.28, glibcxx {'>='} 3.4.25 (ex: Ubuntu 20, Debian 10, Fedora 36, RHEL 8)
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <Footer />
+        </div>
+    )
+}
