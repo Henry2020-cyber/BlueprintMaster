@@ -21,6 +21,15 @@ interface User {
   breakTimeMin?: number
 }
 
+export type TimerMode = "focus" | "break"
+
+interface PomodoroState {
+  isRunning: boolean
+  mode: TimerMode
+  timeLeft: number
+  initialDuration: number
+}
+
 interface Achievement {
   id: string
   title: string
@@ -124,6 +133,7 @@ interface StoreState {
   sidebarCollapsed: boolean
   theme: "dark" | "light"
   isInitialized: boolean
+  pomodoro: PomodoroState
 }
 
 interface StoreActions {
@@ -149,6 +159,12 @@ interface StoreActions {
   toggleSidebar: () => void
   setTheme: (theme: "dark" | "light") => void
   resetProgress: () => Promise<void>
+  // Pomodoro Actions
+  startPomodoro: () => void
+  pausePomodoro: () => void
+  resetPomodoro: () => void
+  setPomodoroMode: (mode: TimerMode) => void
+  setPomodoroTime: (seconds: number) => void
 }
 
 type Store = StoreState & StoreActions
@@ -177,6 +193,13 @@ const defaultProgress: Progress = {
   completedExercises: 0,
   totalHours: 0,
   achievements: ACHIEVEMENTS_LIST.map(a => ({ ...a, unlockedAt: null })),
+}
+
+const defaultPomodoroState: PomodoroState = {
+  isRunning: false,
+  mode: "focus",
+  timeLeft: 25 * 60,
+  initialDuration: 25 * 60
 }
 
 const defaultKanbanColumns: KanbanColumn[] = [
@@ -209,6 +232,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [theme, setThemeState] = useState<"dark" | "light">("dark")
   const [isInitialized, setIsInitialized] = useState(false)
+
+  // Pomodoro State
+  const [pomodoro, setPomodoro] = useState<PomodoroState>(defaultPomodoroState)
 
   const pendingAchievements = useRef<Set<string>>(new Set())
 
@@ -590,6 +616,46 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const toggleSidebar = useCallback(() => setSidebarCollapsed(p => !p), [])
   const setTheme = useCallback((t: "dark" | "light") => setThemeState(t), [])
 
+  // --- Pomodoro Logic ---
+  const startPomodoro = useCallback(() => setPomodoro(p => ({ ...p, isRunning: true })), [])
+  const pausePomodoro = useCallback(() => setPomodoro(p => ({ ...p, isRunning: false })), [])
+
+  const resetPomodoro = useCallback(() => {
+    setPomodoro(p => ({ ...p, isRunning: false, timeLeft: p.initialDuration }))
+  }, [])
+
+  const setPomodoroMode = useCallback((mode: TimerMode) => {
+    // When changing mode, we normally reset to default times, but we need connected user persistence for that.
+    // For now we rely on the component calling setPomodoroTime after mode switch or we infer default.
+    // However, to keep it simple, we just switch mode and stop. Ideally page logic handles duration update.
+    setPomodoro(p => ({ ...p, mode, isRunning: false }))
+  }, [])
+
+  const setPomodoroTime = useCallback((seconds: number) => {
+    setPomodoro(p => ({ ...p, timeLeft: seconds, initialDuration: seconds }))
+  }, [])
+
+  // Global Timer Effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout | undefined
+    if (pomodoro.isRunning && pomodoro.timeLeft > 0) {
+      interval = setInterval(() => {
+        setPomodoro(prev => {
+          if (prev.timeLeft <= 1) {
+            // Timer finished
+            // We can optionally auto-complete here or just stop. 
+            // Ideally we trigger a completion event or let the UI handle it. 
+            // Let's just stop at 0 to avoid loops.
+            return { ...prev, timeLeft: 0, isRunning: false }
+          }
+          return { ...prev, timeLeft: prev.timeLeft - 1 }
+        })
+      }, 1000)
+    }
+    return () => { if (interval) clearInterval(interval) }
+  }, [pomodoro.isRunning, pomodoro.timeLeft])
+
+
   const storeValue: Store = {
     user, isAuthenticated: !!user, isLoadingUser, progress, dailyTasks,
     completedLessonIds, completedExerciseIds, completedModuleIds, kanbanColumns,
@@ -618,7 +684,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         throw err
       }
     },
-    currentModule: 1, currentLesson: 1
+    currentModule: 1, currentLesson: 1,
+    pomodoro, startPomodoro, pausePomodoro, resetPomodoro, setPomodoroMode, setPomodoroTime
   }
 
   return <StoreContext.Provider value={storeValue}>{children}</StoreContext.Provider>

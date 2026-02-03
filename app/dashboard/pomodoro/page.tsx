@@ -8,45 +8,55 @@ import { Badge } from "@/components/ui/badge"
 import { Slider } from "@/components/ui/slider"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { useStore } from "@/lib/store"
+import { useStore, TimerMode } from "@/lib/store"
 import { useToast } from "@/hooks/use-toast"
 
-type TimerMode = "focus" | "break"
-
 export default function PomodoroPage() {
-  const { user, pomodoroSessions, todayFocusTime, completePomodoroSession, addXP, updateStudySettings } = useStore()
+  const {
+    user,
+    pomodoroSessions,
+    todayFocusTime,
+    completePomodoroSession,
+    updateStudySettings,
+    pomodoro,
+    startPomodoro,
+    pausePomodoro,
+    resetPomodoro,
+    setPomodoroMode,
+    setPomodoroTime
+  } = useStore()
+
   const { toast } = useToast()
 
-  const [mode, setMode] = useState<TimerMode>("focus")
+  // Local state for settings form only
   const [focusDuration, setFocusDuration] = useState(user?.focusTimeMin || 25)
   const [breakDuration, setBreakDuration] = useState(user?.breakTimeMin || 5)
-  const [timeLeft, setTimeLeft] = useState((user?.focusTimeMin || 25) * 60)
-  const [isRunning, setIsRunning] = useState(false)
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [hasCompleted, setHasCompleted] = useState(false)
 
-  // Sync with user settings from DB
+  // Sync settings form with user settings from DB on load
   useEffect(() => {
     if (user) {
       setFocusDuration(user.focusTimeMin || 25)
       setBreakDuration(user.breakTimeMin || 5)
-      if (!isRunning) {
-        setTimeLeft((mode === "focus" ? (user.focusTimeMin || 25) : (user.breakTimeMin || 5)) * 60)
+    }
+  }, [user])
+
+  // Initial Sync of Timer if not running and at default state
+  useEffect(() => {
+    // If timer is pristine (full duration) and not running, update it if settings changed
+    // But only if we are not in the middle of a session
+    if (!pomodoro.isRunning && pomodoro.timeLeft === pomodoro.initialDuration) {
+      const expectedDuration = (pomodoro.mode === 'focus' ? (user?.focusTimeMin || 25) : (user?.breakTimeMin || 5)) * 60
+      if (Math.abs(pomodoro.initialDuration - expectedDuration) > 1) {
+        setPomodoroTime(expectedDuration)
       }
     }
-  }, [user, mode, isRunning])
+  }, [user, pomodoro.mode, pomodoro.isRunning, pomodoro.initialDuration, pomodoro.timeLeft, setPomodoroTime])
 
-  const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  const focusTime = focusDuration * 60
-  const breakTime = breakDuration * 60
-  const totalTime = mode === "focus" ? focusTime : breakTime
-
-  const todayFocusSessions = pomodoroSessions.filter(s => {
-    const today = new Date().toDateString()
-    return new Date(s.timestamp).toDateString() === today && s.type === "focus"
-  }).length
-
+  // Handle Timer Completion
   const handleTimerComplete = useCallback(() => {
     if (soundEnabled) {
       // Create a simple beep sound using Web Audio API
@@ -68,41 +78,41 @@ export default function PomodoroPage() {
       }, 500)
     }
 
-    if (mode === "focus") {
-      completePomodoroSession("focus", focusDuration)
+    if (pomodoro.mode === "focus") {
+      // Use the DURATION set in settings or initialDuration for record keeping
+      const durationMin = Math.floor(pomodoro.initialDuration / 60)
+      completePomodoroSession(durationMin, "focus")
       toast({
         title: "Sessão de foco concluída!",
-        description: `+10 XP ganhos. Hora de uma pausa de ${breakDuration} minutos.`,
+        description: `+10 XP ganhos.`,
       })
-      setMode("break")
-      setTimeLeft(breakTime)
+      // User requested to invert logic (likely wants to stay on Focus or user perception of modes is swapped)
+      // Swapping behavior: Focus End -> Ready for Focus (Reset)
+      setPomodoroMode("focus")
+      setPomodoroTime((user?.focusTimeMin || 25) * 60)
     } else {
-      completePomodoroSession("break", breakDuration)
+      const durationMin = Math.floor(pomodoro.initialDuration / 60)
+      completePomodoroSession(durationMin, "break")
       toast({
         title: "Pausa concluída!",
-        description: "Pronto para mais uma sessão de foco?",
+        description: "Pausa finalizada.",
       })
-      setMode("focus")
-      setTimeLeft(focusTime)
+      // Swapping behavior: Break End -> Ready for Break (Reset)
+      setPomodoroMode("break")
+      setPomodoroTime((user?.breakTimeMin || 5) * 60)
     }
-    setIsRunning(false)
-  }, [mode, soundEnabled, focusDuration, breakDuration, breakTime, focusTime, completePomodoroSession, toast])
+  }, [pomodoro.mode, pomodoro.initialDuration, soundEnabled, completePomodoroSession, toast, setPomodoroMode, setPomodoroTime, user])
 
+  // Watch for completion (timeLeft === 0)
   useEffect(() => {
-    let interval: NodeJS.Timeout | undefined
-
-    if (isRunning && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft((prev) => prev - 1)
-      }, 1000)
-    } else if (timeLeft === 0 && isRunning) {
+    if (pomodoro.timeLeft === 0 && !hasCompleted && pomodoro.initialDuration > 0) {
+      setHasCompleted(true)
       handleTimerComplete()
+    } else if (pomodoro.timeLeft > 0) {
+      setHasCompleted(false)
     }
+  }, [pomodoro.timeLeft, pomodoro.initialDuration, hasCompleted, handleTimerComplete])
 
-    return () => {
-      if (interval) clearInterval(interval)
-    }
-  }, [isRunning, timeLeft, handleTimerComplete])
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -111,18 +121,23 @@ export default function PomodoroPage() {
   }
 
   const toggleTimer = () => {
-    if (!isRunning) {
+    if (!pomodoro.isRunning) {
+      if (pomodoro.timeLeft === 0) {
+        // Restart current mode
+        setPomodoroTime(pomodoro.initialDuration)
+      }
+      startPomodoro()
       toast({
-        title: mode === "focus" ? "Foco iniciado!" : "Pausa iniciada!",
-        description: mode === "focus" ? "Concentre-se na sua tarefa." : "Relaxe e descanse.",
+        title: pomodoro.mode === "focus" ? "Foco iniciado!" : "Pausa iniciada!",
+        description: pomodoro.mode === "focus" ? "Concentre-se na sua tarefa." : "Relaxe e descanse.",
       })
+    } else {
+      pausePomodoro()
     }
-    setIsRunning(!isRunning)
   }
 
-  const resetTimer = () => {
-    setIsRunning(false)
-    setTimeLeft(mode === "focus" ? focusTime : breakTime)
+  const resetTimerAction = () => {
+    resetPomodoro()
     toast({
       title: "Timer resetado",
       description: "O timer foi reiniciado.",
@@ -130,9 +145,9 @@ export default function PomodoroPage() {
   }
 
   const switchMode = (newMode: TimerMode) => {
-    setMode(newMode)
-    setTimeLeft(newMode === "focus" ? focusTime : breakTime)
-    setIsRunning(false)
+    setPomodoroMode(newMode)
+    const newTime = newMode === 'focus' ? (user?.focusTimeMin || 25) * 60 : (user?.breakTimeMin || 5) * 60
+    setPomodoroTime(newTime)
   }
 
   const handleSettingsSave = async () => {
@@ -142,7 +157,12 @@ export default function PomodoroPage() {
     })
 
     if (success) {
-      setTimeLeft(mode === "focus" ? focusDuration * 60 : breakDuration * 60)
+      if (!pomodoro.isRunning && pomodoro.mode === 'focus') {
+        setPomodoroTime(focusDuration * 60)
+      } else if (!pomodoro.isRunning && pomodoro.mode === 'break') {
+        setPomodoroTime(breakDuration * 60)
+      }
+
       setSettingsOpen(false)
       toast({
         title: "Configurações salvas",
@@ -157,7 +177,7 @@ export default function PomodoroPage() {
     }
   }
 
-  const progress = ((totalTime - timeLeft) / totalTime) * 100
+  const progress = ((pomodoro.initialDuration - pomodoro.timeLeft) / pomodoro.initialDuration) * 100
 
   const sessions = [
     ...pomodoroSessions.filter(s => {
@@ -165,6 +185,11 @@ export default function PomodoroPage() {
       return new Date(s.timestamp).toDateString() === today
     }).slice(-5).reverse()
   ]
+
+  const todaySessionsCount = pomodoroSessions.filter(s => {
+    const today = new Date().toDateString()
+    return new Date(s.timestamp).toDateString() === today && s.type === "focus"
+  }).length
 
   return (
     <div className="space-y-6">
@@ -178,7 +203,7 @@ export default function PomodoroPage() {
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="border-primary text-primary">
-            {todayFocusSessions} sessões hoje
+            {todaySessionsCount} sessões hoje
           </Badge>
           <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
             <DialogTrigger asChild>
@@ -248,8 +273,8 @@ export default function PomodoroPage() {
               {/* Mode Selector */}
               <div className="mx-auto flex max-w-xs gap-2 rounded-lg bg-secondary p-1">
                 <Button
-                  variant={mode === "focus" ? "default" : "ghost"}
-                  className={`flex-1 gap-2 ${mode === "focus"
+                  variant={pomodoro.mode === "focus" ? "default" : "ghost"}
+                  className={`flex-1 gap-2 ${pomodoro.mode === "focus"
                     ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground hover:text-foreground"
                     }`}
@@ -259,8 +284,8 @@ export default function PomodoroPage() {
                   Foco
                 </Button>
                 <Button
-                  variant={mode === "break" ? "default" : "ghost"}
-                  className={`flex-1 gap-2 ${mode === "break"
+                  variant={pomodoro.mode === "break" ? "default" : "ghost"}
+                  className={`flex-1 gap-2 ${pomodoro.mode === "break"
                     ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground hover:text-foreground"
                     }`}
@@ -301,10 +326,10 @@ export default function PomodoroPage() {
                   {/* Time Display */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <span className="text-6xl font-bold tabular-nums text-foreground">
-                      {formatTime(timeLeft)}
+                      {formatTime(pomodoro.timeLeft)}
                     </span>
                     <span className="mt-2 text-sm text-muted-foreground">
-                      {mode === "focus" ? "Tempo de Foco" : "Tempo de Pausa"}
+                      {pomodoro.mode === "focus" ? "Tempo de Foco" : "Tempo de Pausa"}
                     </span>
                   </div>
                 </div>
@@ -316,19 +341,19 @@ export default function PomodoroPage() {
                   variant="outline"
                   size="icon"
                   className="h-12 w-12 rounded-full border-border bg-transparent text-foreground hover:bg-secondary"
-                  onClick={resetTimer}
+                  onClick={resetTimerAction}
                 >
                   <RotateCcw className="h-5 w-5" />
                 </Button>
                 <Button
                   size="icon"
-                  className={`h-16 w-16 rounded-full ${isRunning
+                  className={`h-16 w-16 rounded-full ${pomodoro.isRunning
                     ? "bg-orange-500 hover:bg-orange-600"
                     : "bg-primary hover:bg-primary/90"
                     } text-primary-foreground`}
                   onClick={toggleTimer}
                 >
-                  {isRunning ? (
+                  {pomodoro.isRunning ? (
                     <Pause className="h-6 w-6" />
                   ) : (
                     <Play className="ml-1 h-6 w-6" />
@@ -355,7 +380,7 @@ export default function PomodoroPage() {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Sessões de Foco</span>
-                <span className="font-semibold text-foreground">{todayFocusSessions}</span>
+                <span className="font-semibold text-foreground">{todaySessionsCount}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Tempo Total</span>
@@ -363,7 +388,7 @@ export default function PomodoroPage() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">XP Ganho</span>
-                <span className="font-semibold text-primary">+{todayFocusSessions * 10} XP</span>
+                <span className="font-semibold text-primary">+{todaySessionsCount * 10} XP</span>
               </div>
             </CardContent>
           </Card>

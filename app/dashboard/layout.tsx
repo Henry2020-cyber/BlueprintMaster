@@ -31,6 +31,7 @@ import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useStore } from "@/lib/store"
 import { useToast } from "@/hooks/use-toast"
+import { FloatingPomodoro } from "@/components/floating-pomodoro"
 import { useSearchParams } from "next/navigation"
 import { Suspense } from "react"
 
@@ -307,6 +308,7 @@ export default function DashboardLayout({
             {children}
           </main>
         </div>
+        <FloatingPomodoro />
       </div>
     </Suspense>
   )
