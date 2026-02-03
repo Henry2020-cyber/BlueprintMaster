@@ -246,7 +246,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const fetchUserData = useCallback(async (userId: string) => {
     try {
       // Track login and update streak via RPC
-      await supabase.rpc('track_user_login')
+      const { error: rpcError } = await supabase.rpc('track_user_login')
+      if (rpcError) {
+        console.error("Error tracking login:", rpcError)
+      }
 
       const today = new Date().toLocaleDateString('en-CA')
       const [pResult, aResult, tResult, clResult, ceResult, cmResult, achResult, lojaResult, dtResult] = await Promise.all([
