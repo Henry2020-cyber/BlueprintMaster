@@ -2,6 +2,8 @@
   "name": "my-v0-project",
   "version": "0.1.0",
   "private": true,
+  "description": "BlueprintMaster Application",
+  "author": "Henry2020-cyber",
   "main": "electron/main.js",
   "scripts": {
     "build": "next build",
@@ -15,7 +17,7 @@
     "appId": "com.blueprintmaster.app",
     "productName": "BlueprintMaster",
     "directories": {
-      "output": "dist-electron"
+      "output": "dist-release"
     },
     "win": {
       "target": "nsis",

@@ -24,6 +24,7 @@ export default function DownloadPage() {
                         </Button>
                     </div>
 
+
                     {/* Download Grid Section */}
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200 fill-mode-backwards">
                         {/* Label Column */}
@@ -32,21 +33,22 @@ export default function DownloadPage() {
                         </div>
 
                         {/* MacOS Column */}
-                        <div className="lg:col-span-1 flex flex-col gap-8 border-l border-border/40 pl-8 lg:pl-10">
+                        <div className="lg:col-span-1 flex flex-col gap-8 border-l border-border/40 pl-8 lg:pl-10 opacity-50 grayscale select-none pointer-events-none">
                             <div className="flex items-center gap-3 text-xl font-bold text-foreground">
                                 <Apple className="w-6 h-6" />
                                 <span>macOS</span>
+                                <span className="text-xs font-normal border border-border px-2 py-0.5 rounded-full whitespace-nowrap">Em breve</span>
                             </div>
 
                             <div className="flex flex-col gap-4">
-                                <Link href="#" className="flex items-center gap-2.5 text-muted-foreground hover:text-primary transition-all hover:translate-x-1 group">
-                                    <Download className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
-                                    <span className="font-medium group-hover:underline decoration-primary/50 underline-offset-4">Download para Apple Silicon</span>
-                                </Link>
-                                <Link href="#" className="flex items-center gap-2.5 text-muted-foreground hover:text-primary transition-all hover:translate-x-1 group">
-                                    <Download className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
-                                    <span className="font-medium group-hover:underline decoration-primary/50 underline-offset-4">Download para Intel</span>
-                                </Link>
+                                <span className="flex items-center gap-2.5 text-muted-foreground group cursor-not-allowed">
+                                    <Download className="w-4 h-4 text-muted-foreground" />
+                                    <span className="font-medium">Download para Apple Silicon</span>
+                                </span>
+                                <span className="flex items-center gap-2.5 text-muted-foreground group cursor-not-allowed">
+                                    <Download className="w-4 h-4 text-muted-foreground" />
+                                    <span className="font-medium">Download para Intel</span>
+                                </span>
                             </div>
 
                             <div className="mt-4 space-y-2">
@@ -65,10 +67,14 @@ export default function DownloadPage() {
                             </div>
 
                             <div className="flex flex-col gap-4">
-                                <Link href="#" className="flex items-center gap-2.5 text-muted-foreground hover:text-primary transition-all hover:translate-x-1 group">
+                                <a
+                                    href="/BlueprintMaster-Setup.exe"
+                                    download="BlueprintMaster-Setup.exe"
+                                    className="flex items-center gap-2.5 text-muted-foreground hover:text-primary transition-all hover:translate-x-1 group"
+                                >
                                     <Download className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
-                                    <span className="font-medium group-hover:underline decoration-primary/50 underline-offset-4">Download para x64</span>
-                                </Link>
+                                    <span className="font-medium group-hover:underline decoration-primary/50 underline-offset-4">Download para x64 .exe</span>
+                                </a>
                                 <Link href="#" className="flex items-center gap-2.5 text-muted-foreground hover:text-primary transition-all hover:translate-x-1 group">
                                     <Download className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
                                     <span className="font-medium group-hover:underline decoration-primary/50 underline-offset-4">Download para ARM64</span>
@@ -84,17 +90,18 @@ export default function DownloadPage() {
                         </div>
 
                         {/* Linux Column */}
-                        <div className="lg:col-span-1 flex flex-col gap-8 border-l border-border/40 pl-8 lg:pl-10">
+                        <div className="lg:col-span-1 flex flex-col gap-8 border-l border-border/40 pl-8 lg:pl-10 opacity-50 grayscale select-none pointer-events-none">
                             <div className="flex items-center gap-3 text-xl font-bold text-foreground">
                                 <Terminal className="w-6 h-6" />
                                 <span>Linux</span>
+                                <span className="text-xs font-normal border border-border px-2 py-0.5 rounded-full whitespace-nowrap">Em breve</span>
                             </div>
 
                             <div className="flex flex-col gap-4">
-                                <Link href="#" className="flex items-center gap-2.5 text-muted-foreground hover:text-primary transition-all hover:translate-x-1 group">
-                                    <Download className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
-                                    <span className="font-medium group-hover:underline decoration-primary/50 underline-offset-4">Download</span>
-                                </Link>
+                                <span className="flex items-center gap-2.5 text-muted-foreground group cursor-not-allowed">
+                                    <Download className="w-4 h-4 text-muted-foreground" />
+                                    <span className="font-medium">Download</span>
+                                </span>
                             </div>
 
                             <div className="mt-4 space-y-2">
