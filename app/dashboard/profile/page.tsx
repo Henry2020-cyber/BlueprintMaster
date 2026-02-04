@@ -1,5 +1,7 @@
 "use client"
 
+
+import { useRouter } from "next/navigation"
 import { useStore } from "@/lib/store"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -67,6 +69,8 @@ export default function ProfilePage() {
         }
     }
 
+    const router = useRouter()
+
     return (
         <div className="max-w-5xl mx-auto space-y-6 animate-in fade-in duration-500">
             {/* Cabeçalho Limpo e Profissional */}
@@ -99,7 +103,7 @@ export default function ProfilePage() {
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-3">
-                        <Button variant="outline" size="sm" className="gap-2 border-border bg-background shadow-xs h-9" onClick={() => window.location.href = '/dashboard/configuracoes'}>
+                        <Button variant="outline" size="sm" className="gap-2 border-border bg-background shadow-xs h-9" onClick={() => router.push('/dashboard/configuracoes')}>
                             <Settings className="h-4 w-4" />
                             Configurações
                         </Button>
@@ -160,7 +164,7 @@ export default function ProfilePage() {
                                             Visite a loja para adquirir blueprints e assets profissionais.
                                         </p>
                                     </div>
-                                    <Button onClick={() => window.location.href = '/dashboard/loja'} size="sm" className="font-bold">
+                                    <Button onClick={() => router.push('/dashboard/loja')} size="sm" className="font-bold">
                                         Ir para Loja
                                     </Button>
                                 </div>
@@ -168,7 +172,8 @@ export default function ProfilePage() {
 
                             {myAssets.length > 0 && (
                                 <div
-                                    onClick={() => window.location.href = '/dashboard/loja'}
+                                    onClick={() => router.push('/dashboard/loja')}
+
                                     className="border border-dashed border-border rounded-2xl flex flex-col items-center justify-center p-8 cursor-pointer hover:bg-muted/30 transition-colors group"
                                 >
                                     <div className="h-12 w-12 rounded-full bg-background border border-border flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">

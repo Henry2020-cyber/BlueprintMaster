@@ -84,28 +84,36 @@ export default function DownloadPage() {
                                 <span>Windows</span>
                             </div>
 
-                            <div className="flex flex-col gap-4">
-                                <button
-                                    onClick={() => handleDownload('exe')}
-                                    className="flex items-center gap-2.5 text-foreground hover:text-primary transition-all hover:translate-x-1 group text-left"
-                                >
-                                    <Download className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
-                                    <span className="font-medium group-hover:underline decoration-primary/50 underline-offset-4">Download .EXE (Instalador)</span>
-                                    <span className="text-xs border border-primary/40 bg-primary/10 text-primary px-2 py-0.5 rounded-full whitespace-nowrap">Recomendado</span>
-                                </button>
-
+                            <div className="flex flex-col gap-6">
+                                <div className="space-y-1">
+                                    <p className="text-xl font-medium text-foreground">Download</p>
+                                    <div className="flex items-center gap-4">
+                                        <button
+                                            onClick={() => handleDownload('exe')}
+                                            className="flex items-center gap-1 text-foreground hover:text-emerald-500 transition-all group text-left"
+                                        >
+                                            <Download className="w-4 h-4 text-emerald-500 group-hover:translate-y-0.5 transition-transform" />
+                                            <div className="flex flex-col leading-none">
+                                                <span className="text-xl font-bold group-hover:text-emerald-500 transition-colors">.EXE</span>
+                                                <span className="text-xs font-medium text-muted-foreground group-hover:text-emerald-500/80 transition-colors ml-1">(Instalador)</span>
+                                            </div>
+                                        </button>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider border border-emerald-500/50 text-emerald-500 px-2 py-0.5 rounded-full">Recomendado</span>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div className="mt-4 space-y-2">
-                                <p className="font-semibold text-xs text-foreground uppercase tracking-wider">Requisitos Mínimos</p>
-                                <p className="text-sm text-muted-foreground leading-relaxed opacity-80">
+                            <div className="mt-2 space-y-2">
+                                <p className="font-bold text-[10px] text-foreground uppercase tracking-widest">Requisitos Mínimos</p>
+                                <p className="text-sm text-muted-foreground leading-relaxed opacity-60">
                                     Windows 10 (64 bit) ou superior.
                                 </p>
                             </div>
 
-                            <div className="mt-2 p-4 bg-primary/5 border border-primary/20 rounded-lg space-y-2">
-                                <p className="font-semibold text-xs text-foreground uppercase tracking-wider flex items-center gap-2">
-                                    <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                            <div className="mt-4 p-5 bg-[#0A0A0A] border border-emerald-900/40 rounded-xl space-y-3 relative overflow-hidden">
+                                <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500/20"></div>
+                                <p className="font-bold text-[10px] text-foreground uppercase tracking-widest flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
                                     Sobre avisos do Windows
                                 </p>
                                 <p className="text-xs text-muted-foreground leading-relaxed">
