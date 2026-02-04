@@ -1,3 +1,5 @@
+"use client"
+
 import { Header } from "@/components/landing/header"
 import { Footer } from "@/components/landing/footer"
 import { Button } from "@/components/ui/button"
@@ -5,6 +7,22 @@ import { Apple, Download, Monitor, Terminal, ArrowRight } from "lucide-react"
 import Link from "next/link"
 
 export default function DownloadPage() {
+    // Configuração do GitHub Release
+    const GITHUB_REPO = "Henry2020-cyber/BlueprintMaster";
+    const RELEASE_VERSION = "latest"; // ou especifique uma versão como "v1.0.0"
+
+    const handleDownload = (fileType: 'exe' | 'zip') => {
+        const fileName = fileType === 'zip'
+            ? 'BlueprintMaster-Setup.zip'
+            : 'BlueprintMaster-Setup.exe';
+
+        // URL do GitHub Releases
+        const downloadUrl = `https://github.com/${GITHUB_REPO}/releases/${RELEASE_VERSION}/download/${fileName}`;
+
+        // Abrir em nova aba para iniciar o download
+        window.open(downloadUrl, '_blank');
+    };
+
     return (
         <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
             <Header />
@@ -67,24 +85,31 @@ export default function DownloadPage() {
                             </div>
 
                             <div className="flex flex-col gap-4">
-                                <a
-                                    href="/BlueprintMaster-Setup.exe"
-                                    download="BlueprintMaster-Setup.exe"
-                                    className="flex items-center gap-2.5 text-muted-foreground hover:text-primary transition-all hover:translate-x-1 group"
+                                <button
+                                    onClick={() => handleDownload('exe')}
+                                    className="flex items-center gap-2.5 text-foreground hover:text-primary transition-all hover:translate-x-1 group text-left"
                                 >
                                     <Download className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
-                                    <span className="font-medium group-hover:underline decoration-primary/50 underline-offset-4">Download para x64 .exe</span>
-                                </a>
-                                <Link href="#" className="flex items-center gap-2.5 text-muted-foreground hover:text-primary transition-all hover:translate-x-1 group">
-                                    <Download className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
-                                    <span className="font-medium group-hover:underline decoration-primary/50 underline-offset-4">Download para ARM64</span>
-                                </Link>
+                                    <span className="font-medium group-hover:underline decoration-primary/50 underline-offset-4">Download .EXE (Instalador)</span>
+                                    <span className="text-xs border border-primary/40 bg-primary/10 text-primary px-2 py-0.5 rounded-full whitespace-nowrap">Recomendado</span>
+                                </button>
+
                             </div>
 
                             <div className="mt-4 space-y-2">
                                 <p className="font-semibold text-xs text-foreground uppercase tracking-wider">Requisitos Mínimos</p>
                                 <p className="text-sm text-muted-foreground leading-relaxed opacity-80">
                                     Windows 10 (64 bit) ou superior.
+                                </p>
+                            </div>
+
+                            <div className="mt-2 p-4 bg-primary/5 border border-primary/20 rounded-lg space-y-2">
+                                <p className="font-semibold text-xs text-foreground uppercase tracking-wider flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                                    Sobre avisos do Windows
+                                </p>
+                                <p className="text-xs text-muted-foreground leading-relaxed">
+                                    O Windows pode mostrar um aviso de segurança. Isso é normal para apps sem certificado digital pago. Clique em "Mais informações" → "Executar assim mesmo" para instalar.
                                 </p>
                             </div>
                         </div>

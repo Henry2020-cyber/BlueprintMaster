@@ -1,25 +1,19 @@
 appId: com.blueprintmaster.app
 productName: BlueprintMaster
+
 directories:
   output: dist-release
-
-asar: false
 
 files:
   - electron/**/*
   - .next/**/*
   - public/**/*
   - package.json
-  - "!electron/node_modules"
-  - "!**/*.map"
-  - "!public/*.exe"
-  - "!public/*.zip"
 
 win:
+  target: nsis
   icon: public/win-icon.png
-  target:
-    - target: nsis
-      arch:
-        - x64
 
-  artifactName: "${productName}-Setup.${ext}"
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true

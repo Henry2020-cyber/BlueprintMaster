@@ -13,12 +13,18 @@
 /dist-electron
 /dist-release
 /public/*.exe
+/public/*.zip
 
 # debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+
+# build logs
+build_log.txt
+error_full.txt
+detailed_error.log
 
 # env files
 .env*

@@ -18,15 +18,18 @@ function createWindow() {
     });
 
     // Determine what to load
-    // If we are in development, or if ELECTRON_START_URL is set, use it.
+    // Development: localhost
     const devUrl = 'http://localhost:3000';
 
-    // IMPORTANT: For the final EXE, you should replace this with your Production URL
-    // e.g. 'https://blueprintmaster.com'
-    const prodUrl = 'http://localhost:3000';
+    // Production: Use environment variable or default
+    // IMPORTANTE: Defina BLUEPRINTMASTER_PROD_URL antes de fazer o build
+    // Exemplo: $env:BLUEPRINTMASTER_PROD_URL="https://blueprintmaster.vercel.app"
+    // Ou edite diretamente abaixo:
+    const prodUrl = 'https://bblueprintmaster.netlify.app/';
 
     const startUrl = app.isPackaged ? prodUrl : (process.env.ELECTRON_START_URL || devUrl);
 
+    console.log(`Loading URL: ${startUrl}`);
     mainWindow.loadURL(startUrl);
 
     mainWindow.once('ready-to-show', () => {
